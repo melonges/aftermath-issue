@@ -14,11 +14,14 @@ import {
 } from "./transactions";
 
 const swap = async () => {
-  const tx = new Transaction();
+  const tx1 = new Transaction();
 
-  const { coin: coinInFromVault, flashLoanForSwap } =
+  const {
+    coin: coinInFromVault,
+    flashLoanForSwap,
+  } = // flashloan object from tx1
     flashloanForSwapTransaction(
-      tx,
+      tx1,
       VAULT_ID,
       MANAGERCAP_ID,
       AMOUNT,
@@ -35,19 +38,23 @@ const swap = async () => {
     coinInAmount: BigInt(AMOUNT),
   });
 
-  const { tx: tx2, coinOutId } =
+  const {
+    tx: tx2,
+    coinOutId,
+  } = // created the tx2 on the basis of the tx1
     await router.addTransactionForCompleteTradeRoute({
-      tx,
+      tx: tx1,
       completeRoute: route,
       coinInId: coinInFromVault,
       slippage: 0.01,
       walletAddress: WALLET_ADDRESS,
     });
 
+  // Error: Result { NestedResult: [0, 1] } is not available to use the current transaction
   returnFlashloanTransaction(
     tx2,
     VAULT_ID,
-    flashLoanForSwap,
+    flashLoanForSwap, // passed flashloan from tx1
     coinOutId!,
     COIN_OUT_TYPE
   );
